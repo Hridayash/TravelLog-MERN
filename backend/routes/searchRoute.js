@@ -8,4 +8,4 @@ const searchRouter = express();
 searchRouter.get("/", searchContent);
 
 
-export default searchContent;
+export default searchRouter;
