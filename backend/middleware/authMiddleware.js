@@ -32,7 +32,7 @@ const refreshRequired = asyncHandler( async (request, response, next) => {
         try {
             const decode = jwt.verify(token, secretKey);
             
-            const user = await userModel.findById( decode.userId ).select("-password");
+            const user = await userModel.findById(decode.userId).select("-password");
 
             if (!user){
                 response.status(404);

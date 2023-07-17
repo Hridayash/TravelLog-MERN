@@ -39,7 +39,7 @@ const generateRefreshToken = (response, userId) => {
 };
 
 const deleteTokens = (request, response) => {
-    request.user = null;    
+    request.user = null;
     response.cookie("access_token", "", {
         httpOnly : true,
         maxAge : new Date(0)

@@ -4,15 +4,18 @@ import {
     updateUserProfile,
     updateUserPassword
 } from "../controllers/userController.js";
+import {
+    authRequired
+} from "../middleware/authMiddleware.js";
 
 
 const userRouter = express();
 
 
 userRouter.route("/:username")
-    .get(getUserProfile)
-    .put(updateUserProfile)
-    .patch(updateUserPassword);
+    .get(authRequired, getUserProfile)
+    .put(authRequired, updateUserProfile)
+    .patch(authRequired, updateUserPassword);
 
 
 export default userRouter;
