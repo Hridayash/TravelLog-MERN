@@ -29,3 +29,10 @@ const getLocation = asyncHandler( async (request, response) => {
     
     return;
 });
+
+
+export {
+    getLocation,
+    createLocation,
+    getLocations
+}
