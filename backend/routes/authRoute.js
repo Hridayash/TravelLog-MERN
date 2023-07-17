@@ -5,6 +5,10 @@ import {
     signOutUser,
     refreshToken
 } from "../controllers/authController.js";
+import {
+    authRequired,
+    refreshRequired
+} from "../middleware/authMiddleware.js";
 
 
 const authRouter = express();
@@ -13,7 +17,10 @@ const authRouter = express();
 authRouter.post("/signin", signInUser);
 authRouter.post("/signup", signUpUser);
 authRouter.post("/signout", signOutUser);
-authRouter.post("/refresh", refreshToken);
+authRouter.post("/refresh", 
+    authRequired,
+    refreshRequired,
+    refreshToken);
 
 
 export default authRouter;

@@ -8,8 +8,8 @@ const notFound = (request, response, next) => {
 
 const errorHandler = (error, request, response, _) => {
     const message = error.message || "Internal Server Error";
-    const statusCode = response.status === 200 ? 
-        500 : response.status;
+    const statusCode = response.statusCode === 200 ? 
+        500 : response.statusCode;
 
     const environment = process.env.NODE_ENV || "development";
     

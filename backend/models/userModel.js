@@ -5,6 +5,7 @@
 // bio: String - A short bio or description of the user.
 
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 
 const userSchema = mongoose.Schema({
@@ -27,11 +28,23 @@ const userSchema = mongoose.Schema({
         default : null
     },
     bio : {
-        type : String
+        type : String,
+        default : ""
     }
 }, {
     timestamps : true
 });
+
+
+userSchema.pre("save", async function(){
+    const salt = await bcrypt.genSalt();
+    this.password = await bcrypt.hash(this.password, salt);
+    return;
+});
+
+userSchema.methods.checkPassword = async function(password) {
+    return await bcrypt.compare(password, this.password)
+};
 
 const userModel = mongoose.model("user", userSchema);
 
