@@ -15,10 +15,19 @@ const locationSchema = mongoose.Schema({
         required : true,
         unique : true
     },
-    description : { type : String },
-    photo : [{type : String}],
-    country : {type : String},
-    region : {type :String},
+    description : { 
+        type : String, 
+        default : ""
+    },
+    photo : [{type : String, default : null}],
+    country : {
+        type : String,
+        default : null
+    },
+    region : {
+        type :String,
+        default : null
+    },
 });
 
 
