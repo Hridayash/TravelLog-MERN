@@ -2,19 +2,31 @@ import express from "express";
 import {
     getLocation,
     getLocations,
-    createLocation
+    createLocation,
+    deleteLocation,
+    updateLocation,
+    uploadLocationImages
 } from "../controllers/locationController.js";
+import { 
+    authRequired 
+} from "../middleware/authMiddleware.js";
+import upload from "../config/storage.js";
 
 
 const locationRouter = express();
 
 locationRouter.route("/")
-    .get(getLocations)
-    .post(createLocation);
+    .get(authRequired, getLocations)
+    .post(authRequired, upload.single("image"), createLocation);
 
 
 locationRouter.route("/:locationId")
-    .get(getLocation);
+    .get(authRequired, getLocation)
+    .delete(authRequired, deleteLocation)
+    .put(authRequired, updateLocation);
+
+locationRouter.route("/:locationId/upload")
+    .post(authRequired, upload.array("images", 5), uploadLocationImages);
 
 
 export default locationRouter;

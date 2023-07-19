@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 import connectDB from "./config/db.js";
 import authRouter from "./routes/authRoute.js";
@@ -28,6 +29,7 @@ app.use(express.urlencoded({
     extended : true
 }));
 app.use(cookieParser());
+app.use(cors());
 
 
 app.use("/api/auth", authRouter);

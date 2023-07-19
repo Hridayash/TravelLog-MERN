@@ -22,11 +22,11 @@ const locationSchema = mongoose.Schema({
     photo : [{type : String, default : null}],
     country : {
         type : String,
-        default : null
+        default : ""
     },
     region : {
         type :String,
-        default : null
+        default : ""
     },
 });
 
