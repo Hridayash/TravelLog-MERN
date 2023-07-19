@@ -32,9 +32,9 @@ const refreshRequired = asyncHandler( async (request, response, next) => {
         try {
             const decode = jwt.verify(token, secretKey);
             
-            const user = await userModel.findById(decode.userId).select("-password");
+            request.user = await userModel.findById(decode.userId).select("-password");
 
-            if (!user){
+            if (!request.user){
                 response.status(404);
                 throw new Error("User does not exists");
             }

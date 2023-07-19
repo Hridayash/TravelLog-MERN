@@ -24,10 +24,19 @@ const travelSchema = mongoose.Schema({
         required : true, 
         unique : true
     },
-    description : { type : String },
-    location : { type : String },
-    photos : [{type :String}],
-    author : { type : String }
+    description : { 
+        type : String,
+        default : ""
+    },
+    location : { 
+        type : String,
+        default : ""
+    },
+    photos : [{type :String, default : null}],
+    author : { 
+        type : String,
+        default : ""
+    }
 }, {
     timestamps : true
 });
