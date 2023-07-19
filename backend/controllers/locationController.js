@@ -66,6 +66,32 @@ const getLocation = asyncHandler( async (request, response) => {
 
 const updateLocation = asyncHandler( async (request, response) => {
     
+    const locationId = request.params.locationId;
+    const { description } = request.body;
+
+    const location = await locationModel.findOne({ _id : locationId });
+
+    if (!location) {
+        response.status(404);
+        throw new Error("Location does not exists");
+    }
+
+    const updatedLocation = await locationModel.updateOne(
+        { _id : locationId },
+        { $set : {
+            description : description || location.description
+        }}
+    );
+
+    if (updateLocation.modifiedCount !== 0){
+        response.status(200).json({
+            message : "Successfully updated description"
+        });
+    } else {
+        response.status(401);
+        throw new Error("Unable to update description");
+    }
+
     return;
 }); 
 
@@ -145,6 +171,5 @@ export {
     getLocations,
     updateLocation,
     deleteLocation,
-
     uploadLocationImages
 }

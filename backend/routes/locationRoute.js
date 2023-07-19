@@ -23,7 +23,7 @@ locationRouter.route("/")
 locationRouter.route("/:locationId")
     .get(authRequired, getLocation)
     .delete(authRequired, deleteLocation)
-    .put(authRequired, updateLocation);
+    .patch(authRequired, updateLocation);
 
 locationRouter.route("/:locationId/upload")
     .post(authRequired, upload.array("images", 5), uploadLocationImages);
