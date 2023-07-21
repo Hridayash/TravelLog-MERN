@@ -90,7 +90,6 @@ const refreshToken = asyncHandler( async (request, response) => {
     response.status(200).json({
         message : "Refreshed token"
     });
-
     return;
 });
 

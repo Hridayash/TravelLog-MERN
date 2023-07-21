@@ -6,19 +6,22 @@ import {
     deleteTravelLog,
     createTravelLog
 } from "../controllers/travelController.js";
+import {
+    authRequired
+} from "../middleware/authMiddleware.js";
 
 
 const travelRouter = express();
 
 
 travelRouter.route("/")
-    .get(getTravelLogs)
-    .post(createTravelLog);
+    .get(authRequired, getTravelLogs)
+    .post(authRequired, createTravelLog);
 
 travelRouter.route("/:logId")
-    .get(getTravelLog)
-    .put(updateTravelLog)
-    .delete(deleteTravelLog);
+    .get(authRequired, getTravelLog)
+    .put(authRequired, updateTravelLog)
+    .delete(authRequired, deleteTravelLog);
 
 
 export default travelRouter;

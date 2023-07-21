@@ -1,10 +1,12 @@
 import asyncHandler from "express-async-handler";
-
+import travelModel from "../models/travelModel.js";
 
 // GET /api/logs: Route to retrieve a list of all travel logs.
 const getTravelLogs = asyncHandler(async (request, response) => {
+    const logs = await travelModel.find({ user_id : request.user._id });
+
     response.status(200).json({
-        message : "Get travel logs"
+        travelLogs : logs
     });
     return;
 });
@@ -19,8 +21,13 @@ const createTravelLog = asyncHandler(async (request, response) => {
 
 // GET /api/logs/:logId: Route to retrieve a specific travel log with its details and photos.
 const getTravelLog = asyncHandler(async (request, response) => {
+    const { logId } = request.params;
+    const log = await travelModel.findOne({
+        _id : logId, user_id : request.user._id
+    });
+
     response.status(200).json({
-        message : "Get travel log"
+        travelLog : log
     });
     return;
 });

@@ -35,7 +35,7 @@ app.use(cors());
 app.use("/api/auth", authRouter);
 app.use("/api/location", locationRouter);
 app.use("/api/search", searchRouter);
-app.use("/api/travel", travelRouter);
+app.use("/api/log", travelRouter);
 app.use("/api/user", userRouter);
 
 
