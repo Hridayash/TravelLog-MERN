@@ -17,6 +17,7 @@ const travelSchema = mongoose.Schema({
     location_id : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "location",
+        default : null
     },
     title : {
         type : String,

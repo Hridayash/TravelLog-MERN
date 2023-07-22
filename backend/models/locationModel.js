@@ -19,7 +19,7 @@ const locationSchema = mongoose.Schema({
         type : String, 
         default : ""
     },
-    photo : [{type : String, default : null}],
+    photos : [{type : String, default : null}],
     country : {
         type : String,
         default : ""

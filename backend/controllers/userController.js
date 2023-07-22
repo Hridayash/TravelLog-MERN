@@ -26,7 +26,7 @@ const updateUserProfile = asyncHandler( async (request, response) => {
     const user = await userModel.findOne({ username }).select("-password");
 
     if (user) {
-        response.status(401);
+        response.status(400);
         throw new Error("Username already exists");
     }
 
@@ -40,11 +40,11 @@ const updateUserProfile = asyncHandler( async (request, response) => {
     );
 
     if (updatedProfile.modifiedCount !== 0) {
-        response.status(200).json({
+        response.status(202).json({
             message : "Update User Profile",
         });
     } else {
-        response.status(401);
+        response.status(500);
         throw new Error("Failed updating the user profile");
     }
     
@@ -58,12 +58,12 @@ const updateUserPassword = asyncHandler( async (request, response) => {
     const user = await userModel.findOne(request.user);
 
     if (!user.checkPassword(old_password)){
-        response.status(403);
+        response.status(400);
         throw new Error("Incorrect password");
     }
 
     if (new_password.length < 6){
-        response.status(401);
+        response.status(400);
         throw new Error("Password must at least be 6 characters long");
     }
 
@@ -78,7 +78,7 @@ const updateUserPassword = asyncHandler( async (request, response) => {
             message : "Update User Password",
         });
     } else {
-        response.status(401);
+        response.status(500);
         throw new Error("Failed updating the user password");
     }
     

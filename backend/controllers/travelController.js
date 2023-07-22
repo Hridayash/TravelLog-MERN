@@ -13,11 +13,39 @@ const getTravelLogs = asyncHandler(async (request, response) => {
 
 // POST /api/logs: Route to create a new travel log.
 const createTravelLog = asyncHandler(async (request, response) => {
-    response.status(200).json({
-        message : "create travel log"
+    const { title, description, author, location_id } = request.body;
+    const travelLog = await travelModel.findOne({title : title});
+
+    if (travelLog){
+        response.status(400);
+        throw new Error("Travel log already exists");
+    }
+
+    if (!title) {
+        response.status(401);
+        throw new Error("Title is required");
+    }
+
+    const newTravelLog = await travelModel.create({
+        user_id : request.user._id, 
+        title : title,
+        description : description,
+        author : author,
+        location_id : location_id
     });
+
+    if (newTravelLog){
+        response.status(200).json({
+            message : "Successfully created",
+            travelLog : newTravelLog
+        })
+    } else {
+        response.status(500);
+        throw new Error("Failed to create Travel Log");
+    }
     return;
 });
+//what is the status protocol 200+ and 400+?
 
 // GET /api/logs/:logId: Route to retrieve a specific travel log with its details and photos.
 const getTravelLog = asyncHandler(async (request, response) => {
@@ -34,19 +62,95 @@ const getTravelLog = asyncHandler(async (request, response) => {
 
 // PUT /api/logs/:logId: Route to update a specific travel log.
 const updateTravelLog = asyncHandler(async (request, response) => {
-    response.status(200).json({
-        message : "update travel log"
+    const { logId } = request.params;
+    const { description } = request.body;
+    const travelLog = await travelModel.findOne({ 
+        _id : logId, user_id : request.user._id  
     });
+
+    if (!travelLog){
+        response.status(404);
+        throw new Error("Travel log not found");
+    }
+
+    const updatedLog = await travelModel.updateOne(
+        { _id : logId },
+        { $set : {description : description}}
+    );
+
+    if (updatedLog !== 0){
+        response.status(200).json({
+            message : "Successfully updated log"
+        });
+    } else {
+        response.status(500);
+        throw new Error("Failed to update the Travel Log");
+    }
     return;
 });
 
 // DELETE /api/logs/:logId: Route to delete a specific travel log.
 const deleteTravelLog = asyncHandler(async (request, response) => {
-    response.status(200).json({
-        message : "delete travel log"
+    const { logId } = request.params;
+    const travelLog = await travelModel.findOne({ 
+        _id : logId, user_id : request.user._id 
     });
+    
+    if (!travelLog) {
+        response.status(404);
+        throw new Error("Travel log not found");
+    }   
+
+    const deletedLog = await travelModel.deleteOne(travelLog);
+    if (deletedLog.deletedCount !== 0){
+        response.status(200).json({
+            message : "Successfully deleted"
+        });
+    } else {
+        response.status(500);
+        throw new Error("Unable to delete log");
+    }
     return;
 });
+
+
+const uploadTravelImages = asyncHandler( async (request, response) => {
+    let images = [];
+    const { logId } = request.params;
+
+    try {
+        const travelLog = await travelModel.findOne({ 
+            _id : logId, user_id : request.user._id
+        });
+
+        if (!travelLog){
+            response.status(404);
+            throw new Error("Travel log not found");
+        }
+
+        request.files.forEach((file) => {
+            images.push(file.buffer.toString("base64"));
+        });
+
+        const updatedLog = await travelModel.updateOne(
+            { _id : logId },
+            { $set : { photos : images }}
+        );
+
+        if (updatedLog.modifiedCount !== 0){
+            response.status(200).json({
+                message : "Successfully uploaded images"
+            });
+        } else {
+            response.status(500);
+            throw new Error("Unable to upload images");
+        }
+    } catch (error) {
+        response.status(500);
+        throw new Error("Failed to upload images");
+    }
+    return;
+}); 
 
 
 export {
@@ -54,6 +158,7 @@ export {
     createTravelLog,
     getTravelLog,
     updateTravelLog,
-    deleteTravelLog
+    deleteTravelLog,
+    uploadTravelImages
 };
 

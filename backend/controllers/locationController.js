@@ -17,7 +17,7 @@ const createLocation = asyncHandler( async (request, response) => {
     const location = await locationModel.findOne({ name : name });    
 
     if (location) {
-        response.status(401);
+        response.status(400);
         throw new Error("Location already exists");
     }
 
@@ -78,7 +78,7 @@ const updateLocation = asyncHandler( async (request, response) => {
             message : "Successfully updated description"
         });
     } else {
-        response.status(401);
+        response.status(500);
         throw new Error("Unable to update description");
     }
 
@@ -100,8 +100,8 @@ const deleteLocation = asyncHandler( async (request, response) => {
             message : "Successfully deleted"
         });
     } else {
-        response.status(401);
-        throw new Error("Unable to Delete Location");
+        response.status(500);
+        throw new Error("Unable to delete location");
     }
     return;
 });
@@ -120,15 +120,12 @@ const uploadLocationImages = asyncHandler( async (request, response) => {
         }
         
         request.files.forEach((file) => {
-            const base64Image = file.buffer.toString("base64");
-            images.push(base64Image);
+            images.push(file.buffer.toString("base64"));
         });
         
         const updatedLocation = await locationModel.updateOne(
             { _id : locationId },
-            { $set : {
-                photo : images
-            }}
+            { $set : { photos : images }}
         );
 
         if (updatedLocation.modifiedCount !== 0){
@@ -141,7 +138,7 @@ const uploadLocationImages = asyncHandler( async (request, response) => {
         }
       
     } catch (error) {
-        response.status(401);
+        response.status(500);
         throw new Error("Failed to upload images");
     }
     return;
