@@ -14,7 +14,7 @@ const signUpUser = asyncHandler( async (request, response) => {
     const user = await userModel.findOne({ username, email });
 
     if (user) {
-        response.status(401);
+        response.status(400);
         throw new Error("User already exists");
     } 
 
@@ -87,10 +87,9 @@ const signOutUser = asyncHandler( async (request, response) => {
 
 const refreshToken = asyncHandler( async (request, response) => {
     generateAccessToken(response, request.user._id);
-    response.status(200).json({
+    response.status(201).json({
         message : "Refreshed token"
     });
-
     return;
 });
 

@@ -4,21 +4,28 @@ import {
     getTravelLogs,
     updateTravelLog,
     deleteTravelLog,
-    createTravelLog
+    createTravelLog, 
+    uploadTravelImages
 } from "../controllers/travelController.js";
-
+import {
+    authRequired
+} from "../middleware/authMiddleware.js";
+import upload from "../config/storage.js";
 
 const travelRouter = express();
 
 
 travelRouter.route("/")
-    .get(getTravelLogs)
-    .post(createTravelLog);
+    .get(authRequired, getTravelLogs)
+    .post(authRequired, createTravelLog);
 
 travelRouter.route("/:logId")
-    .get(getTravelLog)
-    .put(updateTravelLog)
-    .delete(deleteTravelLog);
+    .get(authRequired, getTravelLog)
+    .patch(authRequired, updateTravelLog)
+    .delete(authRequired, deleteTravelLog);
+
+travelRouter.route("/:logId/upload")
+    .post(authRequired, upload.array("images", 5), uploadTravelImages);
 
 
 export default travelRouter;

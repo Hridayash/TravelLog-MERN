@@ -4,22 +4,20 @@ import locationModel from "../models/locationModel.js";
 // GET /api/locations: Route to retrieve a list of all locations or destinations.
 const getLocations = asyncHandler( async (request, response) => {
     const locations = await locationModel.find();
+    
     response.status(200).json({
         locations : locations   
     });
     return;
 });
 
-
 // POST /api/locations: Route to create a new location.
 const createLocation = asyncHandler( async (request, response) => {
-
     const { name, description, country, region } = request.body;
-
     const location = await locationModel.findOne({ name : name });    
 
     if (location) {
-        response.status(401);
+        response.status(400);
         throw new Error("Location already exists");
     }
 
@@ -42,15 +40,10 @@ const createLocation = asyncHandler( async (request, response) => {
     return;
 });
 
-
 // GET /api/locations/:locationId: Route to retrieve a specific location with its details and associated travel logs.
 const getLocation = asyncHandler( async (request, response) => {
-    
-    const locationId = request.params.locationId;
-
-    const location = await locationModel.findOne({
-        _id : locationId, user_id : request.user._id
-    });
+    const { locationId } = request.params;
+    const location = await locationModel.findOne({ _id : locationId });
 
     if (!location){
         response.status(404);
@@ -63,12 +56,9 @@ const getLocation = asyncHandler( async (request, response) => {
     return;
 });
 
-
 const updateLocation = asyncHandler( async (request, response) => {
-    
-    const locationId = request.params.locationId;
+    const { locationId } = request.params;
     const { description } = request.body;
-
     const location = await locationModel.findOne({ _id : locationId });
 
     if (!location) {
@@ -83,23 +73,20 @@ const updateLocation = asyncHandler( async (request, response) => {
         }}
     );
 
-    if (updateLocation.modifiedCount !== 0){
+    if (updatedLocation.modifiedCount !== 0){
         response.status(200).json({
             message : "Successfully updated description"
         });
     } else {
-        response.status(401);
+        response.status(500);
         throw new Error("Unable to update description");
     }
 
     return;
 }); 
 
-
 const deleteLocation = asyncHandler( async (request, response) => {
-    
-    const locationId = request.params.locationId;
-    
+    const { locationId } = request.params;
     const location = await locationModel.findOne({ _id : locationId });
 
     if (!location){
@@ -113,38 +100,32 @@ const deleteLocation = asyncHandler( async (request, response) => {
             message : "Successfully deleted"
         });
     } else {
-        response.status(401);
-        throw new Error("Unable to Delete Location");
+        response.status(500);
+        throw new Error("Unable to delete location");
     }
     return;
 });
 
-
 // ==================== Uploads
 const uploadLocationImages = asyncHandler( async (request, response) => {
+    let images = [];
+    const { locationId } = request.params;
+    
     try {
-
-        let images = [];
-        const locationId = request.params.locationId;
-
         const location = await locationModel.findOne({ _id : locationId });
 
         if (!location) {
             response.status(404);
             throw new Error("Location does not exists");
         }
-
-        request.files.forEach((object) => {
-            const { buffer } = object;
-            const base64Image = buffer.toString("base64");
-            images.push(base64Image);
+        
+        request.files.forEach((file) => {
+            images.push(file.buffer.toString("base64"));
         });
         
         const updatedLocation = await locationModel.updateOne(
             { _id : locationId },
-            { $set : {
-                photo : images
-            }}
+            { $set : { photos : images }}
         );
 
         if (updatedLocation.modifiedCount !== 0){
@@ -155,14 +136,13 @@ const uploadLocationImages = asyncHandler( async (request, response) => {
             response.status(500);
             throw new Error("Unable to upload images");
         }
-
+      
     } catch (error) {
-        response.status(401);
+        response.status(500);
         throw new Error("Failed to upload images");
     }
     return;
 });
-
 
 
 export {
